@@ -1,0 +1,28 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# Database
+sqlalchemy==2.0.35
+aiosqlite==0.20.0          # async SQLite driver
+alembic==1.13.3            # migrations (ready for Postgres swap)
+greenlet>=3.0.0
+# asyncpg==0.29.0          # async Postgres driver — uncomment for prod (requires MSVC on Windows)
+
+# Monitoring
+psutil==6.0.0
+
+# ML
+scikit-learn==1.5.2
+numpy>=2.0
+statsmodels==0.14.4
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.12
+
+# Logging / Utilities
+python-dotenv==1.0.1
+structlog==24.4.0
