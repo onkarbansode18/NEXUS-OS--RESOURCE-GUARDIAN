@@ -105,17 +105,6 @@ export function Sidebar() {
           </div>
           <span className="font-mono text-[11px]">atlas-w-04</span>
         </div>
-
-        {/* User Card */}
-        <div className="pt-2 border-t border-[#f1f5f9] flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#0f172a] text-white flex items-center justify-center text-xs font-bold font-mono">
-            DK
-          </div>
-          <div className="overflow-hidden">
-            <h4 className="text-xs font-bold text-[#0f172a] truncate">Devon Kerr</h4>
-            <p className="text-[11px] text-[#64748b] truncate">Site Reliability</p>
-          </div>
-        </div>
       </div>
     </aside>
   )
