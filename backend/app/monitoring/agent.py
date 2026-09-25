@@ -92,7 +92,7 @@ class MetricsCollector:
     Stateless between calls except for network delta tracking.
     """
 
-    def __init__(self, disk_path: str = "/", top_processes: int = 20) -> None:
+    def __init__(self, disk_path: str = "/", top_processes: int = 100) -> None:
         self._disk_path = disk_path
         self._top_processes = top_processes
         self._last_net_io: psutil._common.snetio | None = None

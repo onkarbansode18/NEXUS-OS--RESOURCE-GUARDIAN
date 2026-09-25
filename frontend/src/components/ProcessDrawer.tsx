@@ -1,5 +1,5 @@
 import React from 'react'
-import { X, Cpu, HardDrive, RefreshCw, Gauge, Sliders, Eye, AlertTriangle } from 'lucide-react'
+import { X, Cpu, HardDrive, RefreshCw, Gauge, Sliders, Eye, AlertTriangle, Power, Pause, Play } from 'lucide-react'
 import { ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { useNexusStore } from '../store'
 
@@ -139,31 +139,52 @@ export function ProcessDrawer() {
 
             <div className="grid grid-cols-2 gap-2">
               <button
+                onClick={() => handleActionClick('kill', 'Kill Process')}
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#dc2626] text-white hover:bg-[#b91c1c] transition-colors shadow-xs"
+              >
+                <Power size={14} /> Kill
+              </button>
+
+              <button
                 onClick={() => handleActionClick('restart', 'Restart')}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-[#ef4444] text-white hover:bg-[#dc2626] transition-colors"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#ef4444] text-white hover:bg-[#dc2626] transition-colors shadow-xs"
               >
                 <RefreshCw size={14} /> Restart
               </button>
 
               <button
+                onClick={() => handleActionClick('suspend', 'Suspend')}
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#d97706] text-white hover:bg-[#b45309] transition-colors shadow-xs"
+              >
+                <Pause size={14} /> Suspend
+              </button>
+
+              <button
+                onClick={() => handleActionClick('resume', 'Resume')}
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] transition-colors shadow-xs"
+              >
+                <Play size={14} /> Resume
+              </button>
+
+              <button
                 onClick={() => handleActionClick('throttle', 'Throttle')}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-[#ea580c] text-white hover:bg-[#c2410c] transition-colors"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#ea580c] text-white hover:bg-[#c2410c] transition-colors shadow-xs"
               >
                 <Gauge size={14} /> Throttle
               </button>
 
               <button
                 onClick={() => handleActionClick('renice', 'Renice')}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#cbd5e1] hover:bg-[#e2e8f0] transition-colors"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#cbd5e1] hover:bg-[#e2e8f0] transition-colors shadow-xs"
               >
                 <Sliders size={14} /> Renice
               </button>
 
               <button
                 onClick={() => handleActionClick('observe', 'Observe')}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#cbd5e1] hover:bg-[#e2e8f0] transition-colors"
+                className="col-span-2 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#cbd5e1] hover:bg-[#e2e8f0] transition-colors shadow-xs"
               >
-                <Eye size={14} /> Observe
+                <Eye size={14} /> Observe Only
               </button>
             </div>
           </div>

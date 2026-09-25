@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     # ── Monitoring Agent ──────────────────────────────────────────────────────
     metrics_interval_seconds: float = 2.0   # how often psutil polls
     metrics_history_minutes: int = 60        # rolling window kept in DB
+    top_processes: int = 100                 # number of processes streamed to dashboard
 
     # ── ML Engine ────────────────────────────────────────────────────────────
     anomaly_contamination: float = 0.05      # Isolation Forest contamination

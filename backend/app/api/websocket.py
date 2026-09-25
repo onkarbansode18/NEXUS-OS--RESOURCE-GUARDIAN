@@ -106,6 +106,25 @@ async def _pipeline_tick(metrics: SystemMetrics) -> None:
         executor = ActionExecutor(simulation_mode=policy.simulation_mode)
 
         # ── 3. Broadcast live metrics ─────────────────────────────────────────
+        process_payload = []
+        for p in metrics.processes[:20]:
+            h = "healthy"
+            if p.cpu_percent >= policy.cpu_critical_pct or p.memory_percent >= policy.ram_critical_pct or p.memory_mb >= 2048:
+                h = "critical"
+            elif p.cpu_percent >= policy.cpu_warning_pct or p.memory_percent >= policy.ram_warning_pct:
+                h = "warning"
+            process_payload.append({
+                "pid":            p.pid,
+                "name":           p.name,
+                "cpu_percent":    p.cpu_percent,
+                "memory_mb":      p.memory_mb,
+                "memory_percent": p.memory_percent,
+                "status":         p.status,
+                "username":       p.username,
+                "created_at":     p.created_at,
+                "health_status":  h,
+            })
+
         await manager.broadcast({
             "event": "metrics",
             "ts": metrics.timestamp,
@@ -120,20 +139,7 @@ async def _pipeline_tick(metrics: SystemMetrics) -> None:
                 "disk_total_gb":  metrics.disk.total_gb,
                 "net_bytes_sent": metrics.network.delta_bytes_sent,
                 "net_bytes_recv": metrics.network.delta_bytes_recv,
-                "processes": [
-                    {
-                        "pid":            p.pid,
-                        "name":           p.name,
-                        "cpu_percent":    p.cpu_percent,
-                        "memory_mb":      p.memory_mb,
-                        "memory_percent": p.memory_percent,
-                        "status":         p.status,
-                        "username":       p.username,
-                        "created_at":     p.created_at,
-                        "health_status":  "healthy",
-                    }
-                    for p in metrics.processes[:20]
-                ],
+                "processes":       process_payload,
             },
         })
 
@@ -250,7 +256,7 @@ async def _pipeline_tick(metrics: SystemMetrics) -> None:
 async def _agent_loop() -> None:
     """Run the monitoring agent in a thread, calling the async pipeline for each tick."""
     collector = MetricsCollector(
-        top_processes=20,
+        top_processes=settings.top_processes,
         disk_path="C:\\",
     )
     interval = settings.metrics_interval_seconds

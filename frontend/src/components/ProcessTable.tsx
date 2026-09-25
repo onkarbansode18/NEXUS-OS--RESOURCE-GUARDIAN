@@ -4,16 +4,32 @@ import { useNexusStore } from '../store'
 import type { ProcessSnapshot } from '../types'
 
 export function ProcessTable() {
-  const { processes, setSelectedProcess } = useNexusStore()
+  const { processes, policy, setSelectedProcess } = useNexusStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<'all' | 'critical' | 'warning' | 'observation' | 'healthy'>('all')
 
+  const getHealthStatus = (p: ProcessSnapshot): 'critical' | 'warning' | 'under_observation' | 'healthy' => {
+    if (p.health_status && p.health_status !== 'healthy') return p.health_status as any
+    const cpuCrit = policy?.cpu_critical_pct ?? 50
+    const ramCrit = policy?.ram_critical_pct ?? 92
+    const cpuWarn = policy?.cpu_warning_pct ?? 30
+    const ramWarn = policy?.ram_warning_pct ?? 80
+
+    if (p.cpu_percent >= cpuCrit || p.memory_percent >= ramCrit || p.memory_mb >= 2048) {
+      return 'critical'
+    }
+    if (p.cpu_percent >= cpuWarn || p.memory_percent >= ramWarn) {
+      return 'warning'
+    }
+    return 'healthy'
+  }
+
   const counts = {
     all: processes.length,
-    critical: processes.filter((p) => p.health_status === 'critical').length,
-    warning: processes.filter((p) => p.health_status === 'warning').length,
-    observation: processes.filter((p) => p.health_status === 'under_observation').length,
-    healthy: processes.filter((p) => p.health_status === 'healthy').length,
+    critical: processes.filter((p) => getHealthStatus(p) === 'critical').length,
+    warning: processes.filter((p) => getHealthStatus(p) === 'warning').length,
+    observation: processes.filter((p) => getHealthStatus(p) === 'under_observation').length,
+    healthy: processes.filter((p) => getHealthStatus(p) === 'healthy').length,
   }
 
   // Filter processes
@@ -25,29 +41,31 @@ export function ProcessTable() {
 
     if (!matchesSearch) return false
 
-    if (activeTab === 'critical') return p.health_status === 'critical'
-    if (activeTab === 'warning') return p.health_status === 'warning'
-    if (activeTab === 'observation') return p.health_status === 'under_observation'
-    if (activeTab === 'healthy') return p.health_status === 'healthy'
+    const status = getHealthStatus(p)
+    if (activeTab === 'critical') return status === 'critical'
+    if (activeTab === 'warning') return status === 'warning'
+    if (activeTab === 'observation') return status === 'under_observation'
+    if (activeTab === 'healthy') return status === 'healthy'
     return true
   })
 
   const getStatusBadge = (p: ProcessSnapshot) => {
-    if (p.health_status === 'critical') {
+    const status = getHealthStatus(p)
+    if (status === 'critical') {
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fef2f2] text-[#dc2626] border border-[#fecaca]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#dc2626]" /> Critical
         </span>
       )
     }
-    if (p.health_status === 'warning') {
+    if (status === 'warning') {
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#fffbeb] text-[#d97706] border border-[#fde68a]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#d97706]" /> Warning
         </span>
       )
     }
-    if (p.health_status === 'under_observation') {
+    if (status === 'under_observation') {
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f5f3ff] text-[#7c3aed] border border-[#ddd6fe]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#7c3aed]" /> Under observation
